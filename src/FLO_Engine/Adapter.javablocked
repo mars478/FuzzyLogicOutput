@@ -1,0 +1,73 @@
+package FLO_Engine;
+
+import Support.Function;
+import Support.Input;
+import Support.Matrix;
+import java.io.File;
+
+/**
+ *
+ * @author mars
+ */
+
+public class Adapter {
+
+    public final int INP_CAST = -3;
+    public final int FUNC_CAST = -2;
+
+    private static Adapter instance = null;
+
+    public static Adapter getInstance(){
+        return instance;
+    }
+
+    private File inpClass;
+    private File[] functionClasses;
+
+    public Adapter(File inpClass, File[] functionClasses){
+        this.inpClass = inpClass;
+        this.functionClasses = functionClasses;
+        instance = this;
+    }
+
+    public int Calc(double[][] arr) {
+
+        int status = INP_CAST;
+
+        try{
+            Facade f = new Facade(true,false,true);
+
+            Input inp;
+            
+            //loading the FL classes
+            mClassLoader cl = new mClassLoader(inpClass.getParent());
+            inp = (Input)cl.loadClass(parse(inpClass.getName())).newInstance();
+
+            status = FUNC_CAST;
+
+            cl = new mClassLoader(functionClasses[0].getParent());
+            Function[] func = new Function[functionClasses.length];
+            for (int i=0;i<func.length;i++)
+                func[i] = (Function) cl.loadClass(parse(functionClasses[i].getName())).newInstance();
+            //eol
+
+            status = -1;
+
+            inp.initFunc(func);
+
+            Matrix M = f.calcD(inp.makeRules(arr));
+            double[] C = f.calcC(M);
+
+            return f.getBest(C);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return status;
+        }
+         
+    }
+
+    private String parse(String inp){
+        return inp.substring(0, inp.length()-6);
+    }
+}

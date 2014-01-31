@@ -1,0 +1,74 @@
+package FLO_Engine;
+
+import Support.Function;
+import Support.Input;
+import Support.Rule;
+import Support.Skill;
+
+/**
+ *
+ * @author mars
+ */
+
+public class input extends Input{
+
+    private Skill A,B,C,D,E,A_M5,B_M5,A_M6,C_M6;
+    
+    public input(){
+        PARAMS_CNT = 5;
+        FUNC_CNT   = 6;
+    }
+
+    public void initFunc(Function[] func){
+        this.func = func;
+    }
+
+    private void makeSkill(double[][] arr){
+            
+            rl = new Rule[FUNC_CNT];
+
+            A = new Skill(arr[0]);
+            B = new Skill(arr[1]);
+            C = new Skill(arr[2]);
+            D = new Skill(arr[3]);
+            E = new Skill(arr[4]);
+
+            double[][] u=arr;
+
+            double[] a_m5 = (double[]) u[0].clone();
+            for (int i=0;i<u[0].length;i++)
+                a_m5[i]*=a_m5[i];
+            A_M5 = new Skill(a_m5);
+
+            double[] b_m5 = (double[]) u[1].clone();
+            for (int i=0;i<u[1].length;i++)
+                b_m5[i]= 1 - b_m5[i];
+            B_M5 = new Skill(b_m5);
+
+            double[] a_m6 = (double[]) u[0].clone();
+            for (int i=0;i<u[0].length;i++)
+                a_m6[i] = 1 - a_m6[i];
+            A_M6 = new Skill(a_m6);
+
+            double[] c_m6 = (double[]) u[2].clone();
+            for (int i=0;i<u[2].length;i++)
+                c_m6[i] = 1 - c_m6[i];
+            C_M6 = new Skill(c_m6);
+
+    }
+
+    public Rule[] makeRules(double[][] arr) throws Exception{
+        
+        makeSkill(arr);
+        
+        rl[0] = new Rule(new Skill[]{A,B,C}          ,func[0]);
+        rl[1] = new Rule(new Skill[]{A,B,C,D}        ,func[1]);
+        rl[2] = new Rule(new Skill[]{A,B,C,D,E}      ,func[2]);
+        rl[3] = new Rule(new Skill[]{A,B,C,E}        ,func[3]);
+        rl[4] = new Rule(new Skill[]{A_M5,B_M5,C,E}  ,func[4]);
+        rl[5] = new Rule(new Skill[]{A_M6,C_M6}      ,func[5]);
+        
+        return rl;
+    }
+
+}

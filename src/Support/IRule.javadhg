@@ -1,0 +1,18 @@
+package Support;
+
+/**
+ *
+ * @author mars
+ */
+public abstract class IRule {
+
+    public Skill[] u;
+    private Function function;
+    public double[] m;
+
+    public abstract IRule newInstance(Skill[] u, Function function) throws Exception;
+
+    public abstract double[] findMin(Skill[] arr) throws Exception;
+
+    public abstract double getF(double x);
+}
